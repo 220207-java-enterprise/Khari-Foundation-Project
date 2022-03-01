@@ -2,6 +2,7 @@ package com.revature.foundations.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.revature.foundations.daos.UsersDAO;
+import com.revature.foundations.services.TokenService;
 import com.revature.foundations.services.UsersService;
 import com.revature.foundations.servlets.AuthServlet;
 import com.revature.foundations.servlets.UsersServlet;
@@ -19,6 +20,7 @@ public class ContextLoaderListener implements ServletContextListener {
         ObjectMapper mapper = new ObjectMapper();
         JwtConfig jwtConfig = new JwtConfig();
         TokenService tokenService = new TokenService(jwtConfig);
+        
 
         UsersDAO usersDAO = new UsersDAO();
         UsersService usersService = new UsersService(usersDAO);

@@ -2,7 +2,6 @@ package com.revature.foundations.models;
 
 import java.util.Objects;
 
-import static com.sun.org.apache.xalan.internal.xsltc.compiler.util.Type.Int;
 
 public class Reimbursements {
     private String reimb_id;

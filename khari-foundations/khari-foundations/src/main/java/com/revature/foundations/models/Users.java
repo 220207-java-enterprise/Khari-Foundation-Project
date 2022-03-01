@@ -79,8 +79,8 @@ public class Users {
         return is_active;
     }
 
-    public void setIs_active(Boolean is_active) {
-        this.is_active = is_active;
+    public void setIs_active(String is_active) {
+        this.is_active = Boolean.valueOf(is_active);
     }
 
     public String getRole_id() {
@@ -121,5 +121,8 @@ public class Users {
                 ", is_active=" + is_active +
                 ", role_id='" + role_id + '\'' +
                 '}';
+    }
+
+    public void setLastName(String surname) {
     }
 }
