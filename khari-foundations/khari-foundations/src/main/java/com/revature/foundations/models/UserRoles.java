@@ -15,6 +15,9 @@ public class UserRoles {
         this.role = role;
     }
 
+    public UserRoles(String role_id) {
+    }
+
     public String getRole_id() {
         return role_id;
     }

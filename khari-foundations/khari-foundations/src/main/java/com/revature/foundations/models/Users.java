@@ -87,8 +87,8 @@ public class Users {
         return role_id;
     }
 
-    public void setRole_id(String role_id) {
-        this.role_id = role_id;
+    public void setRole_id(UserRoles role_id) {
+        this.role_id = String.valueOf(role_id);
     }
 
     public boolean equals(Object o) {

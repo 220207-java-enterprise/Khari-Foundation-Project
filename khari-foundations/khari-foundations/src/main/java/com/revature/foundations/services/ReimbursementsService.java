@@ -15,7 +15,7 @@ public class ReimbursementsService {
     private UsersDAO usersDAO; // a dependency of UserService
 
     // Constructor injection
-    public UserService(UsersDAO usersDAO) {
+    public void UserService(UsersDAO usersDAO) {
         this.usersDAO = usersDAO;
     }
 
