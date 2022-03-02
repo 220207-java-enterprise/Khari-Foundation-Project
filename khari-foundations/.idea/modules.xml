@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project version="4">
-  <component name="ProjectModuleManager">
-    <modules>
-      <module fileurl="file://$PROJECT_DIR$/khari-foundations/foundations.iml" filepath="$PROJECT_DIR$/khari-foundations/foundations.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/khari-foundations.iml" filepath="$PROJECT_DIR$/.idea/khari-foundations.iml" />
-    </modules>
-  </component>
-</project>

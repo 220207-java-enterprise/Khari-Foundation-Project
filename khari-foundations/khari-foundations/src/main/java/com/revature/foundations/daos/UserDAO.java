@@ -57,7 +57,7 @@ public class UsersDAO implements CrudDAO<Users> {
             ResultSet rs = pstmt.executeQuery();
             if (rs.next()) {
                 users = new Users();
-                users.setUser_id(rs.getString("setUser_id"));
+                users.setUser_id(rs.getString("User_id"));
                 users.setGiven_name(rs.getString("Given_name"));
                 users.setSurname(rs.getString("surname"));
                 users.setEmail(rs.getString("email"));
@@ -86,7 +86,7 @@ public class UsersDAO implements CrudDAO<Users> {
             ResultSet rs = pstmt.executeQuery();
             if (rs.next()) {
                 users = new Users();
-                users.setUser_id(rs.getString("setUser_id"));
+                users.setUser_id(rs.getString("User_id"));
                 users.setGiven_name(rs.getString("Given_name"));
                 users.setSurname(rs.getString("surname"));
                 users.setEmail(rs.getString("email"));
@@ -147,7 +147,7 @@ public class UsersDAO implements CrudDAO<Users> {
             pstmt.setString(4, newUsers.getEmail());
             pstmt.setString(5, newUsers.getUsername());
             pstmt.setString(6, newUsers.getPassword());
-            pstmt.setString(7, newUsers.getRole_id().getUser_id());
+            pstmt.setString(7, newUsers.getRole_id());
 
             int rowsInserted = pstmt.executeUpdate();
             if (rowsInserted != 1) {

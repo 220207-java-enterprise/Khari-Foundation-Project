@@ -2,10 +2,17 @@ package com.revature.foundations.servlets;
 
 import com.fasterxml.jackson.databind.DatabindException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.revature.foundations.dtos.requests.NewUserRequest;
+import com.revature.foundations.dtos.response.Principal;
+import com.revature.foundations.dtos.response.ResourceCreationResponse;
+import com.revature.foundations.dtos.response.UsersResponse;
 import com.revature.foundations.models.Users;
+import com.revature.foundations.services.TokenService;
 import com.revature.foundations.services.UsersService;
 import com.revature.foundations.util.exceptions.InvalidRequestException;
 import com.revature.foundations.util.exceptions.ResourceConflictException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -17,10 +24,15 @@ import java.util.List;
 
 //Mapping: /users/
 public class UsersServlet extends HttpServlet {
+
+    private static Logger logger = LogManager.getLogger(UsersServlet.class);
+
+    private final TokenService tokenService;
     private final UsersService usersService;
     private final ObjectMapper objectMapper;
 
     public UsersServlet(UsersService usersService, ObjectMapper objectMapper) {
+        this.tokenService = tokenService;
         this.usersService = usersService;
         this.objectMapper = objectMapper;
     }
@@ -49,12 +61,12 @@ public class UsersServlet extends HttpServlet {
             resp.setStatus(401);
             return;
         }
-        if (!requester.getRole().equals("ADMIN")) {
+        if (!requester.getRole_id().equals("ADMIN")) {
             resp.setStatus(403); // FORBIDDEN
             return;
         }
 
-        List<AppUserResponse> users = UsersService.getAllUsers();
+        List<UsersResponse> users = UsersService.getAllUsers();
         String payload = ObjectMapper.writeValueAsString(users);
         resp.setContentType("application/json");
         resp.getWriter().write(payload);
@@ -74,7 +86,7 @@ public class UsersServlet extends HttpServlet {
             Users newUser = UsersService.register(newUserRequest);
             resp.setStatus(201); // CREATED
             resp.setContentType("application/json");
-            String payload = ObjectMapper.writeValueAsString(new ResourceCreationResponse(newUser.getId()));
+            String payload = ObjectMapper.writeValueAsString(new ResourceCreationResponse(newUser.getUser_id()));
             respWriter.write(payload);
 
         } catch (InvalidRequestException | DatabindException e) {
