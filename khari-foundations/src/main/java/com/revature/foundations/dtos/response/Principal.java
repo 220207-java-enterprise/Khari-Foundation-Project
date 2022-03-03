@@ -1,0 +1,54 @@
+package com.revature.foundations.dtos.response;
+
+import com.revature.foundations.models.Users;
+
+public class Principal {
+
+    private String user_id;
+    private String username;
+    private String role_id;
+
+    public Principal() {
+        super();
+    }
+
+    public Principal(Users users) {
+        this.user_id = users.getUser_id();
+        this.username = users.getUsername();
+        this.role_id = users.getRole().getRole();
+    }
+
+    public String getUser_id() {
+        return user_id;
+    }
+
+    public void setUser_id(String user_id) {
+        this.user_id = user_id;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getRole_id() {
+        return role_id;
+    }
+
+    public void setRole_id(String role_id) {
+        this.role_id = role_id;
+    }
+
+    @Override
+    public String toString() {
+        return "Principal{" +
+                "user_id='" + user_id + '\'' +
+                ", username='" + username + '\'' +
+                ", role_id='" + role_id + '\'' +
+                '}';
+    }
+
+}
