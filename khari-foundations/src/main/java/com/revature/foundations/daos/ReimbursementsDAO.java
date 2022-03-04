@@ -1,13 +1,12 @@
 package com.revature.foundations.daos;
 
 import com.revature.foundations.models.Reimbursements;
-import com.revature.foundations.models.Users;
+import com.revature.foundations.models.User;
 import com.revature.foundations.util.ConnectionFactory;
 import com.revature.foundations.util.exceptions.ResourcePersistenceException;
 
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.List;
 
 public class ReimbursementsDAO {
 
@@ -113,7 +112,7 @@ public class ReimbursementsDAO {
     // DELETE
 
     public void deleteById(String id) {
-        Users deletedUser = null;
+        User deletedUser = null;
 
         try (Connection conn = ConnectionFactory.getInstance().getConnection()){
 

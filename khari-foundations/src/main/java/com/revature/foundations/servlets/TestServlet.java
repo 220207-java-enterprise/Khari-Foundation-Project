@@ -1,6 +1,8 @@
 package com.revature.foundations.servlets;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.revature.foundations.dtos.requests.NewUserRequest;
+import com.revature.foundations.models.User;
 import com.revature.foundations.services.UserService;
 
 import javax.servlet.ServletException;
@@ -19,15 +21,31 @@ public class TestServlet extends HttpServlet {
         this.mapper = mapper;
     }
 
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        NewUserRequest newUserRequest = mapper.readValue(req.getInputStream(), NewUserRequest.class);
+        User newUser = userService.register(newUserRequest);
+        resp.getWriter().write("<h1>/" + newUserRequest +"</h1>");
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        try {
+            NewUserRequest newUserRequest = mapper.readValue(req.getInputStream(), NewUserRequest.class);
+            resp.getWriter().write("<h1>/" + newUserRequest + "</h1>");
+            User newUser = userService.register(newUserRequest);
+            resp.setStatus(201);
+
+        }catch(Exception e){
+            e.printStackTrace();
+            resp.setStatus(500);
+        }
+    }
+
     public UserService getUserService() {
         return userService;
     }
 
     public ObjectMapper getMapper() {
         return mapper;
-    }
-
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException, IOException {
-        resp.getWriter().write("<h1>/test works!</h1>");
     }
 }

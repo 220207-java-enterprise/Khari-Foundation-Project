@@ -2,20 +2,20 @@ package com.revature.foundations.models;
 
 import java.util.Objects;
 
-public class UserRoles {
+public class UserRole {
     private String role_id;
     private String role;
 
-    public UserRoles() {
+    public UserRole() {
         super();
     }
 
-    public UserRoles(String role_id, String role) {
+    public UserRole(String role_id, String role) {
         this.role_id = role_id;
         this.role = role;
     }
 
-    public UserRoles(String role_id) {
+    public UserRole(String role_id) {
     }
 
     public String getRole_id() {
@@ -37,9 +37,9 @@ public class UserRoles {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        UserRoles userRoles = (UserRoles) o;
-        return Objects.equals(role_id, userRoles.role_id) &&
-                Objects.equals(role, userRoles.role);
+        UserRole userRole = (UserRole) o;
+        return Objects.equals(role_id, userRole.role_id) &&
+                Objects.equals(role, userRole.role);
     }
 
     public int hashCode() {

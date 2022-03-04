@@ -1,21 +1,21 @@
 package com.revature.foundations.dtos.response;
 
-import com.revature.foundations.models.Users;
+import com.revature.foundations.models.User;
 
 public class Principal {
 
     private String user_id;
     private String username;
-    private String role_id;
+    private String role;
 
     public Principal() {
         super();
     }
 
-    public Principal(Users users) {
-        this.user_id = users.getUser_id();
-        this.username = users.getUsername();
-        this.role_id = users.getRole().getRole();
+    public Principal(User user) {
+        this.user_id = user.getUser_id();
+        this.username = user.getUsername();
+        this.role = user.getRole().getRole();
     }
 
     public String getUser_id() {
@@ -34,12 +34,12 @@ public class Principal {
         this.username = username;
     }
 
-    public String getRole_id() {
-        return role_id;
+    public String getRole() {
+        return role;
     }
 
-    public void setRole_id(String role_id) {
-        this.role_id = role_id;
+    public void setRole(String role) {
+        this.role = role;
     }
 
     @Override
@@ -47,7 +47,7 @@ public class Principal {
         return "Principal{" +
                 "user_id='" + user_id + '\'' +
                 ", username='" + username + '\'' +
-                ", role_id='" + role_id + '\'' +
+                ", role='" + role + '\'' +
                 '}';
     }
 

@@ -1,7 +1,7 @@
 package com.revature.foundations.daos;
 
-import com.revature.foundations.models.UserRoles;
-import com.revature.foundations.models.Users;
+import com.revature.foundations.models.User;
+import com.revature.foundations.models.UserRole;
 import com.revature.foundations.util.ConnectionFactory;
 import com.revature.foundations.util.exceptions.DataSourceException;
 import com.revature.foundations.util.exceptions.ResourcePersistenceException;
@@ -13,7 +13,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UserDAO implements CrudDAO<Users> {
+public class UserDAO implements CrudDAO<User> {
 
     private final String rootSelect = "SELECT " +
             "au.User_id, au.Given_name, au.surname, au.email, au.username, au.password, au.Role_id, ur.role, au.is_active " +
@@ -21,9 +21,9 @@ public class UserDAO implements CrudDAO<Users> {
             "JOIN ers_user_roles ur " +
             "ON au.role_id = ur.role_id ";
 
-    public Users findUserByUsername(String username) {
+    public User findUserByUsername(String username) {
 
-        Users users = null;
+        User user = null;
 
         try (Connection conn = ConnectionFactory.getInstance().getConnection()) {
 
@@ -32,27 +32,27 @@ public class UserDAO implements CrudDAO<Users> {
 
             ResultSet rs = pstmt.executeQuery();
             if (rs.next()) {
-                users = new Users();
-                users.setUser_id(rs.getString("User_id"));
-                users.setGiven_name(rs.getString("Given_name"));
-                users.setSurname(rs.getString("surname"));
-                users.setEmail(rs.getString("email"));
-                users.setUsername(rs.getString("username"));
-                users.setPassword(rs.getString("password"));
-                users.setRole(new UserRoles(rs.getString("Role_id"), rs.getString("Role_id")));
-                users.setIs_active(rs.getBoolean("is_active"));
+                user = new User();
+                user.setUser_id(rs.getString("User_id"));
+                user.setGiven_name(rs.getString("Given_name"));
+                user.setSurname(rs.getString("surname"));
+                user.setEmail(rs.getString("email"));
+                user.setUsername(rs.getString("username"));
+                user.setPassword(rs.getString("password"));
+                user.setRole(new UserRole(rs.getString("Role_id"), rs.getString("Role_id")));
+                user.setIs_active(rs.getBoolean("is_active"));
             }
 
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
-        return users;
+        return user;
     }
 
-    public Users findUserByEmail(String email) {
+    public User findUserByEmail(String email) {
 
-        Users users = null;
+        User user = null;
 
         try (Connection conn = ConnectionFactory.getInstance().getConnection()) {
 
@@ -61,28 +61,28 @@ public class UserDAO implements CrudDAO<Users> {
 
             ResultSet rs = pstmt.executeQuery();
             if (rs.next()) {
-                users = new Users();
-                users.setUser_id(rs.getString("User_id"));
-                users.setGiven_name(rs.getString("Given_name"));
-                users.setSurname(rs.getString("surname"));
-                users.setEmail(rs.getString("email"));
-                users.setUsername(rs.getString("username"));
-                users.setPassword(rs.getString("password"));
-                users.setRole(new UserRoles(rs.getString("Role_id"), rs.getString("Role_id")));
-                users.setIs_active(rs.getBoolean("is_active"));
+                user = new User();
+                user.setUser_id(rs.getString("User_id"));
+                user.setGiven_name(rs.getString("Given_name"));
+                user.setSurname(rs.getString("surname"));
+                user.setEmail(rs.getString("email"));
+                user.setUsername(rs.getString("username"));
+                user.setPassword(rs.getString("password"));
+                user.setRole(new UserRole(rs.getString("Role_id"), rs.getString("Role_id")));
+                user.setIs_active(rs.getBoolean("is_active"));
             }
 
         } catch (SQLException e) {
             throw new DataSourceException(e);
         }
 
-        return users;
+        return user;
 
     }
 
-    public Users findUsersByUsernameAndPassword(String username, String password) {
+    public User findUsersByUsernameAndPassword(String username, String password) {
 
-        Users authUsers = null;
+        User authUser = null;
 
         try (Connection conn = ConnectionFactory.getInstance().getConnection()) {
 
@@ -92,38 +92,38 @@ public class UserDAO implements CrudDAO<Users> {
 
             ResultSet rs = pstmt.executeQuery();
             if (rs.next()) {
-                authUsers = new Users();
-                authUsers.setUser_id(rs.getString("user_id"));
-                authUsers.setGiven_name(rs.getString("given_name"));
-                authUsers.setSurname(rs.getString("surname"));
-                authUsers.setEmail(rs.getString("email"));
-                authUsers.setUsername(rs.getString("username"));
-                authUsers.setPassword(rs.getString("password"));
-                authUsers.setRole(new UserRoles(rs.getString("role_id"), rs.getString("role")));
-                authUsers.setIs_active(rs.getBoolean("is_active"));
+                authUser = new User();
+                authUser.setUser_id(rs.getString("user_id"));
+                authUser.setGiven_name(rs.getString("given_name"));
+                authUser.setSurname(rs.getString("surname"));
+                authUser.setEmail(rs.getString("email"));
+                authUser.setUsername(rs.getString("username"));
+                authUser.setPassword(rs.getString("password"));
+                authUser.setRole(new UserRole(rs.getString("role_id"), rs.getString("role")));
+                authUser.setIs_active(rs.getBoolean("is_active"));
             }
 
         } catch (SQLException e) {
             throw new DataSourceException(e);
         }
 
-        return authUsers;
+        return authUser;
     }
 
     @Override
-    public void save(Users newUsers) {
+    public void save(User newUser) {
 
         try (Connection conn = ConnectionFactory.getInstance().getConnection()) {
 
             conn.setAutoCommit(false);
             PreparedStatement pstmt = conn.prepareStatement("INSERT INTO ers_users VALUES (?, ?, ?, ?, ?, ?, ?)");
-            pstmt.setString(1, newUsers.getUser_id());
-            pstmt.setString(2, newUsers.getGiven_name());
-            pstmt.setString(3, newUsers.getSurname());
-            pstmt.setString(4, newUsers.getEmail());
-            pstmt.setString(5, newUsers.getUsername());
-            pstmt.setString(6, newUsers.getPassword());
-            pstmt.setString(7, newUsers.getRole().getRole_id());
+            pstmt.setString(1, newUser.getUser_id());
+            pstmt.setString(2, newUser.getGiven_name());
+            pstmt.setString(3, newUser.getSurname());
+            pstmt.setString(4, newUser.getEmail());
+            pstmt.setString(5, newUser.getUsername());
+            pstmt.setString(6, newUser.getPassword());
+            pstmt.setString(7, newUser.getRole().getRole_id());
 
             int rowsInserted = pstmt.executeUpdate();
             if (rowsInserted != 1) {
@@ -139,9 +139,9 @@ public class UserDAO implements CrudDAO<Users> {
     }
 
     @Override
-    public Users getById(String id) {
+    public User getById(String id) {
 
-        Users users = null;
+        User user = null;
 
         try (Connection conn = ConnectionFactory.getInstance().getConnection()) {
 
@@ -150,42 +150,42 @@ public class UserDAO implements CrudDAO<Users> {
 
             ResultSet rs = pstmt.executeQuery();
             if (rs.next()) {
-                users = new Users();
-                users.setUser_id(rs.getString("setUser_id"));
-                users.setGiven_name(rs.getString("Given_name"));
-                users.setSurname(rs.getString("surname"));
-                users.setEmail(rs.getString("email"));
-                users.setUsername(rs.getString("username"));
-                users.setPassword(rs.getString("password"));
-                users.setRole(new UserRoles(rs.getString("Role_id"), rs.getString("Role_id")));
-                users.setIs_active(rs.getBoolean("is_active"));
+                user = new User();
+                user.setUser_id(rs.getString("setUser_id"));
+                user.setGiven_name(rs.getString("Given_name"));
+                user.setSurname(rs.getString("surname"));
+                user.setEmail(rs.getString("email"));
+                user.setUsername(rs.getString("username"));
+                user.setPassword(rs.getString("password"));
+                user.setRole(new UserRole(rs.getString("Role_id"), rs.getString("Role_id")));
+                user.setIs_active(rs.getBoolean("is_active"));
             }
 
         } catch (SQLException e) {
             throw new DataSourceException(e);
         }
 
-        return users;
+        return user;
 
     }
 
 
-    public List<Users> getAll() {
+    public List<User> getAll() {
 
-        List<Users> users = new ArrayList<>();
+        List<User> users = new ArrayList<>();
 
         try (Connection conn = ConnectionFactory.getInstance().getConnection()) {
 
             ResultSet rs = conn.createStatement().executeQuery(rootSelect);
             while (rs.next()) {
-                Users user = new Users();
+                User user = new User();
                 user.setUser_id(rs.getString("user_id"));
                 user.setGiven_name(rs.getString("given_name"));
                 user.setSurname(rs.getString("surname"));
                 user.setEmail(rs.getString("email"));
                 user.setUsername(rs.getString("username"));
                 user.setPassword(rs.getString("password"));
-                user.setRole(new UserRoles(rs.getString("role_id"), rs.getString("role_id")));
+                user.setRole(new UserRole(rs.getString("role_id"), rs.getString("role_id")));
                 user.setIs_active(rs.getBoolean("is_active"));
                 users.add(user);
             }
@@ -197,7 +197,7 @@ public class UserDAO implements CrudDAO<Users> {
     }
 
     @Override
-    public void update(Users updatedUsers) {
+    public void update(User updatedUser) {
         try (Connection conn = ConnectionFactory.getInstance().getConnection()) {
 
             conn.setAutoCommit(false);
@@ -208,12 +208,12 @@ public class UserDAO implements CrudDAO<Users> {
                     "username = ?, " +
                     "password = ? " +
                     "WHERE User_id = ?");
-            pstmt.setString(1, updatedUsers.getGiven_name());
-            pstmt.setString(2, updatedUsers.getSurname());
-            pstmt.setString(3, updatedUsers.getEmail());
-            pstmt.setString(4, updatedUsers.getUsername());
-            pstmt.setString(5, updatedUsers.getPassword());
-            pstmt.setString(6, updatedUsers.getUser_id());
+            pstmt.setString(1, updatedUser.getGiven_name());
+            pstmt.setString(2, updatedUser.getSurname());
+            pstmt.setString(3, updatedUser.getEmail());
+            pstmt.setString(4, updatedUser.getUsername());
+            pstmt.setString(5, updatedUser.getPassword());
+            pstmt.setString(6, updatedUser.getUser_id());
 
             // TODO allow role to be updated as well
 

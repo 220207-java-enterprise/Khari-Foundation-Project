@@ -1,6 +1,6 @@
 package com.revature.foundations.dtos.requests;
 
-import com.revature.foundations.models.Users;
+import com.revature.foundations.models.User;
 
 public class NewUserRequest {
 
@@ -9,14 +9,15 @@ public class NewUserRequest {
     private String email;
     private String username;
     private String password;
+    private String role;
 
     public NewUserRequest() {
         super();
     }
 
-    public NewUserRequest(String firstName, String lastName, String email, String username, String password) {
-        this.given_name = firstName;
-        this.surname = lastName;
+    public NewUserRequest(String given_name, String surname, String email, String username, String password) {
+        this.given_name = given_name;
+        this.surname = surname;
         this.email = email;
         this.username = username;
         this.password = password;
@@ -62,8 +63,17 @@ public class NewUserRequest {
         this.password = password;
     }
 
-    public Users extractUser() {
-        return new Users(given_name, surname, email, username, password);
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
+    public User extractUser(){
+        return new User(given_name, surname, email, username, password);
+
     }
 
     @Override
@@ -74,7 +84,7 @@ public class NewUserRequest {
                 ", email='" + email + '\'' +
                 ", username='" + username + '\'' +
                 ", password='" + password + '\'' +
+                ", role='" + role + '\'' +
                 '}';
     }
-
 }

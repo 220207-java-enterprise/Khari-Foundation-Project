@@ -1,52 +1,59 @@
 package com.revature.foundations.services;
 
-import com.revature.foundations.daos.CrudDAO;
 import com.revature.foundations.daos.UserDAO;
+import com.revature.foundations.daos.UserRolesDAO;
 import com.revature.foundations.dtos.requests.LoginRequest;
 import com.revature.foundations.dtos.requests.NewUserRequest;
-import com.revature.foundations.dtos.response.UsersResponse;
-import com.revature.foundations.models.UserRoles;
-import com.revature.foundations.models.Users;
+import com.revature.foundations.dtos.requests.UserUpdateRequest;
+import com.revature.foundations.dtos.response.UserResponse;
+import com.revature.foundations.models.User;
+import com.revature.foundations.models.UserRole;
 import com.revature.foundations.util.exceptions.AuthenticationException;
+import com.revature.foundations.util.exceptions.ForbiddenException;
 import com.revature.foundations.util.exceptions.InvalidRequestException;
 import com.revature.foundations.util.exceptions.ResourceConflictException;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 public class UserService {
 
-    private UserDAO userDAO; // a dependency of UserService
+    private UserDAO userDAO;
+    private UserRolesDAO userRoleDAO;
 
-    public UserService(UserDAO userDAO) {
+
+    public UserService(UserDAO userDAO){
         this.userDAO = userDAO;
+        this.userRoleDAO = userRoleDAO;
     }
 
-    // Constructor injection
-    public void UserService(UserDAO userDAO) {
-        this.userDAO = userDAO;
+    public static List<UserResponse> getAllEmployee() {
+        return null;
     }
 
-    public static List<UsersResponse> getAllUsers() {
 
-        // Java 8+ mapping logic (with Streams)
-        return CrudDAO.getAll() != null ? CrudDAO.getAll()
-                .stream()
-                .map(UsersResponse::new) // intermediate operation
-                .collect(Collectors.toList()) : null; // terminal operation
+    //Admin
+    public List<UserResponse> getAllEmployees(){
+        List<User> users = userDAO.getAll();
+        List<UserResponse> userResponses = new ArrayList<>();
+        for (User user : users){
+            userResponses.add(new UserResponse(user));
+        }
+        return userResponses;
     }
 
-    public Users register(NewUserRequest newUsersRequest) {
+    // Admin/User
+    public User register(NewUserRequest newUserRequest) {
+        User newUser = newUserRequest.extractUser();
 
-        Users newUsers = newUsersRequest.extractUser();
-
-        if (!isUserValid(newUsers)) {
-            throw new InvalidRequestException("Bad registration details given.");
+        if (!isUserValid(newUser) || newUserRequest.getRole().equals("ADMIN")) {
+            throw new InvalidRequestException("Bad registration details were given.");
         }
 
-        boolean usernameAvailable = isUsernameAvailable(newUsers.getUsername());
-        boolean emailAvailable = isEmailAvailable(newUsers.getEmail());
+        boolean usernameAvailable = isUsernameAvailable(newUser.getUsername());
+        boolean emailAvailable = isEmailAvailable(newUser.getEmail());
 
         if (!usernameAvailable || !emailAvailable) {
             String msg = "The values provided for the following fields are already taken by other users: ";
@@ -54,56 +61,71 @@ public class UserService {
             if (!emailAvailable) msg += "email";
             throw new ResourceConflictException(msg);
         }
+        UserRole myRole = userRoleDAO.getById(newUserRequest.getRole());
+        newUser.setRole(myRole);
 
-        // TODO encrypt provided password before storing in the database
+        System.out.println(myRole);
+        newUser.setUser_id(UUID.randomUUID().toString());
+        newUser.setIs_active(false);
 
-        newUsers.setUser_id(UUID.randomUUID().toString());
-        newUsers.setRole(new UserRoles("7c3521f5-ff75-4e8a-9913-01d15ee4dc97", "BASIC_USER")); // All newly registered users start as BASIC_USER
-        userDAO.save(newUsers);
+        userDAO.save(newUser);
 
-        return newUsers;
+        return newUser;
     }
 
-    public Users login(LoginRequest loginRequest) {
+
+    public User login(LoginRequest loginRequest) {
 
         String username = loginRequest.getUsername();
         String password = loginRequest.getPassword();
 
-        if (!isUsernameValid(username) || !isPasswordValid(password)) {
+        if (isUsernameValid(username) || isPasswordValid(password)) {
             throw new InvalidRequestException("Invalid credentials provided!");
         }
 
-        Users authUsers = userDAO.findUsersByUsernameAndPassword(username, password);
+        User authUser = userDAO.findUserByUsername(username);
 
-        if (authUsers == null) {
+        // Check for if user exists then check if user is active
+        if (authUser == null) {
             throw new AuthenticationException();
         }
+        if (!authUser.is_active()) {
+            throw new ForbiddenException();
+        }
 
-        return authUsers;
-
+        return authUser;
     }
 
-    public boolean isUserValid(Users Users) {
+    // Admin update user status
+    public void updateUser(UserUpdateRequest userUpdate) throws IOException {
+        User newUser = userDAO.getById(userUpdate.getUser_id());
+        System.out.println(newUser);
+        if (newUser.getRole().getRole().equals("ADMIN"))
+            throw new InvalidRequestException("Cannot remove admin");
 
-        // First name and last name are not just empty strings or filled with whitespace
-        if (Users.getGiven_name().trim().equals("") || Users.getSurname().trim().equals("")) {
-            return false;
-        }
+        UserRole myRole = userRoleDAO.getById(userUpdate.getRole());
 
-        // Usernames must be a minimum of 8 and a max of 25 characters in length, and only contain alphanumeric characters.
-        if (isUsernameValid(Users.getUsername())) {
-            return false;
-        }
+        //Check for any updates then prepare User to be updated
+        if(userUpdate.getGiven_name() != null)
+            newUser.setGiven_name(userUpdate.getGiven_name());
+        if(userUpdate.getSurname() != null)
+            newUser.setGiven_name(userUpdate.getGiven_name());
+        if(userUpdate.getEmail() != null)
+            newUser.setEmail(userUpdate.getEmail());
+        if(userUpdate.getUsername() != null)
+            newUser.setUsername(userUpdate.getUsername());
+        if(userUpdate.getPassword() != null)
+            newUser.setPassword(userUpdate.getPassword());
+        if(userUpdate.getActive() != null )
+            newUser.setIs_active(userUpdate.getActive());
+        if(userUpdate.getRole() != null)
+            newUser.setRole(myRole);
 
-        // Passwords require a minimum eight characters, at least one uppercase letter, one lowercase
-        // letter, one number and one special character
-        if (isPasswordValid(Users.getPassword())) {
-            return false;
-        }
+        if (newUser.getRole().getRole().equals("ADMIN"))
+            throw new InvalidRequestException("Cannot promote to admin");
 
-        // Basic email validation
-        return isEmailValid(Users.getEmail());
-
+        System.out.println(newUser);
+        userDAO.update(newUser);
     }
 
     public boolean isEmailValid(String email) {
@@ -111,23 +133,47 @@ public class UserService {
         return email.matches("^[^@\\s]+@[^@\\s.]+\\.[^@.\\s]+$");
     }
 
+
     public boolean isUsernameValid(String username) {
-        if (username == null) return false;
+        if (username == null) return true;
         return username.matches("^[a-zA-Z0-9]{8,25}");
     }
 
+
     public boolean isPasswordValid(String password) {
-        if (password == null) return false;
         return password.matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$");
     }
 
+
     public boolean isUsernameAvailable(String username) {
-        if (username == null || isUsernameValid(username)) return false;
         return userDAO.findUserByUsername(username) == null;
     }
 
+
     public boolean isEmailAvailable(String email) {
-        if (email == null || !isEmailValid(email)) return false;
         return userDAO.findUserByEmail(email) == null;
+    }
+
+
+    private boolean isUserValid(User appUser) {
+
+        // First name and last name are not just empty strings or filled with whitespace
+        if (appUser.getGiven_name().trim().equals("") || appUser.getSurname().trim().equals("")) {
+            return false;
+        }
+
+        // Usernames must be a minimum of 8 and a max of 25 characters in length, and only contain alphanumeric characters.
+        if (isUsernameValid(appUser.getUsername())) {
+            return false;
+        }
+
+        // Passwords require a minimum eight characters, at least one uppercase letter, one lowercase
+        // letter, one number and one special character
+        if (isPasswordValid(appUser.getPassword())) {
+            return false;
+        }
+
+        // Basic email validation
+        return isEmailValid(appUser.getEmail());
     }
 }

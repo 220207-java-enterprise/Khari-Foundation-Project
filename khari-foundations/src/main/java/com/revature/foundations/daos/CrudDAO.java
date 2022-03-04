@@ -1,6 +1,6 @@
 package com.revature.foundations.daos;
 
-import com.revature.foundations.models.Users;
+import com.revature.foundations.models.User;
 
 import java.util.List;
 
@@ -18,7 +18,7 @@ public interface CrudDAO<T> {
     void save(T newObject);
     T getById(String id);
 
-    static List<Users> getAll() {
+    static List<User> getAll() {
         return null;
     }
 

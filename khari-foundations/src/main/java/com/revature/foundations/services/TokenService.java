@@ -28,7 +28,7 @@ public class TokenService {
                                       .setIssuedAt(new Date(now))
                                       .setExpiration(new Date(now + jwtConfig.getExpiration()))
                                       .setSubject(subject.getUsername())
-                                      .claim("role_id", subject.getRole_id())
+                                      .claim("role_id", subject.getRole())
                                       .signWith(jwtConfig.getSigAlg(), jwtConfig.getSigningKey());
 
         return tokenBuilder.compact();
@@ -47,7 +47,7 @@ public class TokenService {
             Principal principal = new Principal();
             principal.setUser_id(claims.getId());
             principal.setUsername(claims.getSubject());
-            principal.setRole_id(claims.get("role_id", String.class));
+            principal.setRole(claims.get("role_id", String.class));
 
             return principal;
 

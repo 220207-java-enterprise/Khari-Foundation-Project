@@ -2,7 +2,7 @@ package com.revature.foundations.models;
 
 import java.util.Objects;
 
-public class Users {
+public class User {
     private String user_id;
     private String username;
     private String email;
@@ -10,13 +10,13 @@ public class Users {
     private String given_name;
     private String surname;
     private Boolean is_active;
-    private UserRoles role;
+    private UserRole role;
 
-    public Users() {
+    public User() {
         super();
     }
 
-    public Users(String user_id, String username, String email, String password, String given_name, String surname, Boolean is_active, UserRoles role) {
+    public User(String user_id, String username, String email, String password, String given_name, String surname, Boolean is_active, UserRole role) {
         this.user_id = user_id;
         this.username = username;
         this.email = email;
@@ -27,15 +27,12 @@ public class Users {
         this.role = role;
     }
 
-    public Users(String given_name, String surname, String email, String username, String password) {
-        this.user_id = user_id;
+    public User(String given_name, String surname, String email, String username, String password) {
         this.username = username;
         this.email = email;
         this.password = password;
         this.given_name = given_name;
         this.surname = surname;
-        this.is_active = is_active;
-        this.role = role;
     }
 
     public String getUser_id() {
@@ -90,15 +87,19 @@ public class Users {
         return is_active;
     }
 
+    public boolean is_active() {
+        return is_active;
+    }
+
     public void setIs_active(Boolean is_active) {
         this.is_active = is_active;
     }
 
-    public UserRoles getRole() {
+    public UserRole getRole() {
         return role;
     }
 
-    public void setRole(UserRoles role) {
+    public void setRole(UserRole role) {
         this.role = role;
     }
 
@@ -106,8 +107,15 @@ public class Users {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Users users = (Users) o;
-        return Objects.equals(user_id, users.user_id) && Objects.equals(username, users.username) && Objects.equals(email, users.email) && Objects.equals(password, users.password) && Objects.equals(given_name, users.given_name) && Objects.equals(surname, users.surname) && Objects.equals(is_active, users.is_active) && Objects.equals(role, users.role);
+        User user = (User) o;
+        return Objects.equals(user_id, user.user_id)
+                && Objects.equals(username, user.username)
+                && Objects.equals(email, user.email)
+                && Objects.equals(password, user.password)
+                && Objects.equals(given_name, user.given_name)
+                && Objects.equals(surname, user.surname)
+                && Objects.equals(is_active, user.is_active)
+                && Objects.equals(role, user.role);
     }
 
     @Override
@@ -115,17 +123,5 @@ public class Users {
         return Objects.hash(user_id, username, email, password, given_name, surname, is_active, role);
     }
 
-    @Override
-    public String toString() {
-        return "Users{" +
-                "user_id='" + user_id + '\'' +
-                ", username='" + username + '\'' +
-                ", email='" + email + '\'' +
-                ", password='" + password + '\'' +
-                ", given_name='" + given_name + '\'' +
-                ", surname='" + surname + '\'' +
-                ", is_active=" + is_active +
-                ", role=" + role +
-                '}';
-    }
 }
+
